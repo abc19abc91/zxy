@@ -1,10 +1,9 @@
 swagger: '2.0'
 info:
   description: >-
-    This is a sample server Petstore server.  You can find out more about    
-    Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net,
-    #swagger](http://swagger.io/irc/).      For this sample, you can use the api
-    key `special-key` to test the authorization     filters.
+    zxy api      Swagger at [http://swagger.io](http://swagger.io) or on
+    [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample,
+    you can use the api key `special-key` to test the authorization     filters.
   version: 1.0.0
   title: Swagger Petstore
   termsOfService: 'http://swagger.io/terms/'
@@ -14,213 +13,245 @@ info:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 host: petstore.swagger.io
-basePath: /v2
+basePath: /v1
 tags:
-  - name: user
-    description: Operations about user
+  - name: teacher
+    description: Operations about teacher
     externalDocs:
-      description: Find out more about our store
+      description: Find out more about zxy
       url: 'http://swagger.io'
+  - name: teaching
+    description: 教学
+  - name: parentFeedback
+    description: 家长反馈
 schemes:
   - http
 paths:
-  /user:
-    post:
-      tags:
-        - user
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      produces:
-        - application/xml
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: Created user object
-          required: true
-          schema:
-            $ref: '#/definitions/User'
-      responses:
-        default:
-          description: successful operation
-  /user/createWithArray:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: ''
-      operationId: createUsersWithArrayInput
-      produces:
-        - application/xml
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: List of user object
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/User'
-      responses:
-        default:
-          description: successful operation
-  /user/createWithList:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: ''
-      operationId: createUsersWithListInput
-      produces:
-        - application/xml
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: List of user object
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/User'
-      responses:
-        default:
-          description: successful operation
-  /user/login:
+  /teacher/students:
     get:
       tags:
-        - user
-      summary: Logs user into the system
+        - teacher
+      summary: 老师管理的学生列表和教学计划
       description: ''
-      operationId: loginUser
+      operationId: ''
       produces:
-        - application/xml
-        - application/json
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: true
-          type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: true
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            type: string
-          headers:
-            X-Rate-Limit:
-              type: integer
-              format: int32
-              description: calls per hour allowed by the user
-            X-Expires-After:
-              type: string
-              format: date-time
-              description: date in UTC when token expires
-        '400':
-          description: Invalid username/password supplied
-  /user/logout:
-    get:
-      tags:
-        - user
-      summary: Logs out current logged in user session
-      description: ''
-      operationId: logoutUser
-      produces:
-        - application/xml
         - application/json
       parameters: []
       responses:
-        default:
+        '200':
           description: successful operation
-  '/user/{username}':
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Student'
+        '400':
+          description: Invalid token supplied
+      security:
+        - teacher_token: []
+  /teaching/plan/findByStudentId:
     get:
       tags:
-        - user
-      summary: Get user by user name
+        - teacher
+      summary: 单个学生教学计划
       description: ''
-      operationId: getUserByName
+      operationId: ''
       produces:
-        - application/xml
         - application/json
       parameters:
-        - name: username
+        - name: studentId
+          in: query
+          description: studentId that need to be considered for filter
+          required: true
+          type: integer
+          collectionFormat: multi
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/TeachingPlan'
+        '400':
+          description: Invalid token supplied
+      security:
+        - teacher_token: []
+  '/teaching/plan/{userId}':
+    post:
+      tags:
+        - teaching
+      summary: 创建教学计划
+      description: 创建第一个教学阶段时，同时生成一个教学计划
+      operationId: createTeachingPlan
+      produces:
+        - application/json
+      parameters:
+        - name: userId
           in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
+          description: 创建教学计划的学生ID
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: 第一个教学阶段
+          required: true
+          schema:
+            $ref: '#/definitions/TeachingStep'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/TeachingPlan'
+        '400':
+          description: Invalid TeachingPlan
+      security:
+        - teacher_token: []
+  /teaching/plan/step:
+    post:
+      tags:
+        - teaching
+      summary: 创建教学阶段
+      description: 创建教学阶段
+      operationId: createTeachingStep
+      produces:
+        - application/json
+      parameters:
+        - name: teachingStep
+          in: body
+          description: 教学阶段数据
+          required: true
+          schema:
+            $ref: '#/definitions/TeachingStep'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/TeachingPlan'
+        '400':
+          description: Invalid TeachingPlan
+      security:
+        - teacher_token: []
+  '/teaching/plan/step/{stepId}':
+    delete:
+      tags:
+        - teaching
+      summary: 删除教学阶段
+      description: 只有老师能删除
+      operationId: deleteTeachingStep
+      produces:
+        - application/json
+      parameters:
+        - name: stepId
+          in: path
+          description: The step that needs to be deleted
           required: true
           type: string
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/TeachingPlan'
         '400':
-          description: Invalid username supplied
+          description: Invalid stepId supplied
         '404':
-          description: User not found
+          description: stepId not found
+      security:
+        - teacher_token: []
+  /teaching/plan/step/Status:
+    post:
+      tags:
+        - teaching
+      summary: 创建教学动态
+      description: ''
+      operationId: createTeachingStatus
+      produces:
+        - application/json
+      parameters:
+        - name: teachingStatus
+          in: body
+          description: 教学动态数据
+          required: true
+          schema:
+            $ref: '#/definitions/TeachingStatus'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/TeachingStep'
+        '400':
+          description: Invalid TeachingStatus
+      security:
+        - teacher_token: []
+  /parentFeedback/findByStatus:
+    get:
+      tags:
+        - parentFeedback
+      summary: 查找家长反馈
+      description: ''
+      operationId: findParentFeedbacksByStatus
+      produces:
+        - application/json
+      parameters:
+        - name: status
+          in: query
+          description: Status values that need to be considered for filter
+          required: true
+          type: string
+          enum:
+            - 参照ParentFeedbackStatus
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ParentFeedback'
+        '400':
+          description: Invalid status value
+      security:
+        - teacher_token: []
 securityDefinitions:
-  petstore_auth:
-    type: oauth2
-    authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
-    flow: implicit
-    scopes:
-      'write:pets': modify pets in your account
-      'read:pets': read your pets
-  api_key:
+  teacher_token:
     type: apiKey
-    name: api_key
+    name: teacher_token
     in: header
 definitions:
-  Order:
+  ParentFeedbackStatus:
+    type: string
+    enum: &ref_0
+      - normal
+      - readed
+      - deleteded
+    description: '家长反馈状态,普通，已读，已经删除'
+  ParentFeedbackType:
+    type: string
+    enum: &ref_1
+      - teachingStatuspositive
+      - teachingStatusNegative
+      - teachingPlapositive
+      - teachingPlanNegative
+    description: '家长反馈类型,点赞教学动态 | 教学动态待改进 | 点赞教学计划 | 教学计划待改进'
+  Set:
+    type: string
+    enum: *ref_0
+  Set1:
+    type: string
+    enum: *ref_1
+  ApiResponse:
     type: object
     properties:
-      id:
-        type: integer
-        format: int64
-      petId:
-        type: integer
-        format: int64
-      quantity:
+      code:
         type: integer
         format: int32
-      shipDate:
+      type:
         type: string
-        format: date-time
-      status:
+      message:
         type: string
-        description: Order Status
-        enum:
-          - placed
-          - approved
-          - delivered
-      complete:
-        type: boolean
-        default: false
-    xml:
-      name: Order
-  Category:
+  Student:
     type: object
+    description: 学生
     properties:
       id:
         type: integer
         format: int64
       name:
-        type: string
-    xml:
-      name: Category
-  User:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      username:
         type: string
       firstName:
         type: string
@@ -235,66 +266,138 @@ definitions:
       userStatus:
         type: integer
         format: int32
-        description: User Status
+        description: Student Status
+      teachingPlan:
+        $ref: '#/definitions/TeachingStep'
     xml:
-      name: User
-  Tag:
+      name: Student
+  TeachingPlan:
     type: object
+    description: 教学计划
     properties:
       id:
         type: integer
         format: int64
       name:
         type: string
+      creatorTeacherId:
+        type: integer
+        format: int64
+        description: 创建的老师的ID
+      desc:
+        type: string
+      createDate:
+        type: string
+        format: date-time
+      teachingSteps:
+        type: array
+        items:
+          $ref: '#/definitions/TeachingStep'
+        xml:
+          name: teachingSteps
+          wrapped: true
     xml:
-      name: Tag
-  Pet:
+      name: TeachingPlan
+  TeachingStep:
     type: object
-    required:
-      - name
-      - photoUrls
+    description: 教学阶段
     properties:
       id:
         type: integer
         format: int64
-      category:
-        $ref: '#/definitions/Category'
+      teachingPlanId:
+        type: integer
+        format: int64
       name:
         type: string
-        example: doggie
+      creatorTeacherId:
+        type: integer
+        format: int64
+        description: 创建的老师的ID
+      desc:
+        type: string
+      createDate:
+        type: string
+        format: date-time
+      teachingStatuses:
+        type: array
+        items:
+          $ref: '#/definitions/TeachingStatus'
+        xml:
+          name: teachingStatuses
+          wrapped: true
+    xml:
+      name: TeachingPlan
+  TeachingStatus:
+    type: object
+    description: 教学动态
+    properties:
+      id:
+        type: integer
+        format: int64
+      createDate:
+        type: string
+        format: date-time
+      teachingStepId:
+        description: 所属的教学阶段
+        type: integer
+        format: int64
+      creatorTeacherId:
+        type: integer
+        format: int64
+        description: 创建的老师的ID
+      dimensions:
+        type: array
+        items:
+          $ref: '#/definitions/Dimension'
+        xml:
+          name: dimensions
+          wrapped: true
       photoUrls:
         type: array
+        description: 最多6个
         xml:
-          name: photoUrl
+          name: photoUrls
           wrapped: true
         items:
           type: string
-      tags:
+      voiceUrls:
         type: array
+        description: 最多3个
         xml:
-          name: tag
+          name: voiceUrls
           wrapped: true
         items:
-          $ref: '#/definitions/Tag'
-      status:
-        type: string
-        description: pet status in the store
-        enum:
-          - available
-          - pending
-          - sold
+          type: string
+      complete:
+        type: boolean
+        default: false
     xml:
-      name: Pet
-  ApiResponse:
+      name: TeachingStatus
+  Dimension:
     type: object
+    description: 教学动态-评价维度：teaching status dimension
     properties:
-      code:
-        type: integer
-        format: int32
+      name:
+        type: string
+      value:
+        type: number
+        format: float
+  ParentFeedback:
+    type: object
+    description: 家长反馈
+    properties:
+      studentName:
+        type: string
+      createDate:
+        type: string
+        format: date-time
+      comment:
+        type: string
+      status:
+        $ref: '#/definitions/ParentFeedbackStatus'
       type:
-        type: string
-      message:
-        type: string
+        $ref: '#/definitions/ParentFeedbackType'
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
