@@ -103,7 +103,7 @@ paths:
           description: Invalid TeachingPlan
       security:
         - teacher_token: []
-  '/teaching/plan/step/{studentId}':
+  /teaching/plan/step/:
     post:
       tags:
         - teaching
@@ -113,11 +113,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: studentId
-          in: path
-          description: 创建教学阶段的学生ID
-          required: true
-          type: integer
         - name: teachingStep
           in: body
           description: 教学阶段数据
@@ -147,7 +142,8 @@ paths:
           in: path
           description: The step that needs to be deleted
           required: true
-          type: string
+          type: integer
+          format: int64
       responses:
         '200':
           description: successful operation
