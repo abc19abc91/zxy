@@ -12,7 +12,7 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-host: petstore.swagger.io
+host: 'localhost:8080'
 basePath: /v1
 tags:
   - name: teacher
@@ -73,7 +73,7 @@ paths:
           description: Invalid token supplied
       security:
         - teacher_token: []
-  '/teaching/plan/{userId}':
+  '/teaching/plan/{studentId}':
     post:
       tags:
         - teaching
@@ -83,11 +83,11 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: userId
+        - name: studentId
           in: path
           description: 创建教学计划的学生ID
           required: true
-          type: string
+          type: integer
         - in: body
           name: body
           description: 第一个教学阶段
@@ -103,7 +103,7 @@ paths:
           description: Invalid TeachingPlan
       security:
         - teacher_token: []
-  /teaching/plan/step:
+  '/teaching/plan/step/{studentId}':
     post:
       tags:
         - teaching
@@ -113,6 +113,11 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: studentId
+          in: path
+          description: 创建教学阶段的学生ID
+          required: true
+          type: integer
         - name: teachingStep
           in: body
           description: 教学阶段数据
@@ -123,7 +128,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/TeachingPlan'
+            $ref: '#/definitions/TeachingStep'
         '400':
           description: Invalid TeachingPlan
       security:
@@ -146,8 +151,6 @@ paths:
       responses:
         '200':
           description: successful operation
-          schema:
-            $ref: '#/definitions/TeachingPlan'
         '400':
           description: Invalid stepId supplied
         '404':
@@ -174,7 +177,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/TeachingStep'
+            $ref: '#/definitions/TeachingStatus'
         '400':
           description: Invalid TeachingStatus
       security:
@@ -280,11 +283,14 @@ definitions:
         format: int64
       name:
         type: string
+      studentId:
+        type: integer
+        format: int64
       creatorTeacherId:
         type: integer
         format: int64
         description: 创建的老师的ID
-      desc:
+      content:
         type: string
       createDate:
         type: string
@@ -308,13 +314,16 @@ definitions:
       teachingPlanId:
         type: integer
         format: int64
+      studentId:
+        type: integer
+        format: int64
       name:
         type: string
       creatorTeacherId:
         type: integer
         format: int64
         description: 创建的老师的ID
-      desc:
+      content:
         type: string
       createDate:
         type: string
@@ -353,22 +362,11 @@ definitions:
         xml:
           name: dimensions
           wrapped: true
-      photoUrls:
+      files:
         type: array
-        description: 最多6个
-        xml:
-          name: photoUrls
-          wrapped: true
+        description: 最多6个图片，3个语音
         items:
-          type: string
-      voiceUrls:
-        type: array
-        description: 最多3个
-        xml:
-          name: voiceUrls
-          wrapped: true
-        items:
-          type: string
+          $ref: '#/definitions/TeachingStatusFile'
       complete:
         type: boolean
         default: false
@@ -383,6 +381,15 @@ definitions:
       value:
         type: number
         format: float
+  TeachingStatusFile:
+    type: object
+    description: 教学动态-文件
+    properties:
+      fileType:
+        type: string
+        description: IMAGE或者VOICE
+      url:
+        type: string
   ParentFeedback:
     type: object
     description: 家长反馈
