@@ -178,20 +178,74 @@ paths:
           description: Invalid TeachingStatus
       security:
         - teacher_token: []
-  /parentFeedback/findByStatus:
+  /parentFeedback:
+    post:
+      tags:
+        - parentFeedback
+      summary: 添加家长反馈
+      description: ''
+      operationId: createParentFeedbacksByStatus
+      produces:
+        - application/json
+      parameters:
+        - name: parentFeedback
+          in: body
+          description: 家长反馈数据
+          required: true
+          schema:
+            $ref: '#/definitions/ParentFeedback'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ParentFeedback'
+        '400':
+          description: Invalid status value
+      security:
+        - teacher_token: []
+    put:
+      tags:
+        - parentFeedback
+      summary: '修改家长反馈,当前仅用于设置消息为已读'
+      description: ''
+      operationId: updateParentFeedbacks
+      produces:
+        - application/json
+      parameters:
+        - name: parentFeedback
+          in: body
+          description: 家长反馈数据
+          required: true
+          schema:
+            $ref: '#/definitions/ParentFeedback'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid status value
+      security:
+        - teacher_token: []
+  /parentFeedback/findByStatusAndParentId:
     get:
       tags:
         - parentFeedback
       summary: 查找家长反馈
       description: ''
-      operationId: findParentFeedbacksByStatus
+      operationId: findParentFeedbacksByStatusAndParentId
       produces:
         - application/json
       parameters:
+        - name: parentId
+          in: query
+          required: true
+          type: integer
+          format: int64
         - name: status
           in: query
           description: Status values that need to be considered for filter
-          required: true
+          required: false
           type: string
           enum:
             - 参照ParentFeedbackStatus
@@ -219,20 +273,9 @@ definitions:
       - readed
       - deleteded
     description: '家长反馈状态,普通，已读，已经删除'
-  ParentFeedbackType:
-    type: string
-    enum: &ref_1
-      - teachingStatuspositive
-      - teachingStatusNegative
-      - teachingPlapositive
-      - teachingPlanNegative
-    description: '家长反馈类型,点赞教学动态 | 教学动态待改进 | 点赞教学计划 | 教学计划待改进'
   Set:
     type: string
     enum: *ref_0
-  Set1:
-    type: string
-    enum: *ref_1
   ApiResponse:
     type: object
     properties:
@@ -372,6 +415,9 @@ definitions:
     type: object
     description: 教学动态-评价维度：teaching status dimension
     properties:
+      id:
+        type: integer
+        format: int64
       name:
         type: string
       value:
@@ -390,17 +436,34 @@ definitions:
     type: object
     description: 家长反馈
     properties:
-      studentName:
+      id:
+        type: integer
+        format: int64
+      parentId:
+        type: integer
+        format: int64
+      content:
         type: string
+      feedbackResult:
+        type: string
+        description: 结果(positive很赞，negative待改进)
+        enum:
+          - positive
+          - negative
+      feedbackTarget:
+        type: string
+        description: 反馈对像(plan教学计划，status教学动态)
+        enum:
+          - plan
+          - status
+      feedbackTargetId:
+        type: integer
+        format: int64
       createDate:
         type: string
         format: date-time
-      comment:
-        type: string
       status:
         $ref: '#/definitions/ParentFeedbackStatus'
-      type:
-        $ref: '#/definitions/ParentFeedbackType'
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
