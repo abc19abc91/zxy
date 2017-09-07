@@ -24,6 +24,8 @@ tags:
     description: 教学
   - name: parentFeedback
     description: 家长反馈
+  - name: uploadFile
+    description: 上传文件
 schemes:
   - http
 paths:
@@ -258,6 +260,54 @@ paths:
               $ref: '#/definitions/ParentFeedback'
         '400':
           description: Invalid status value
+      security:
+        - teacher_token: []
+  /uploadFile:
+    post:
+      tags:
+        - uploadFile
+      summary: 上传文件
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: file
+          type: file
+          description: The file to upload.
+      responses:
+        '200':
+          description: 'successful operation,文件地址'
+          schema:
+            type: string
+        '400':
+          description: Invalid stepId supplied
+        '404':
+          description: stepId not found
+      security:
+        - teacher_token: []
+  /uploadFiles:
+    post:
+      tags:
+        - uploadFile
+      summary: 上传多全文件
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: files
+          type: file
+          description: The file to upload.
+      responses:
+        '200':
+          description: 'successful operation,文件地址'
+          schema:
+            type: array
+            items:
+              type: string
+        '400':
+          description: Invalid stepId supplied
+        '404':
+          description: stepId not found
       security:
         - teacher_token: []
 securityDefinitions:
