@@ -5,7 +5,7 @@ info:
     [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample,
     you can use the api key `special-key` to test the authorization     filters.
   version: 1.0.0
-  title: Swagger Petstore
+  title: Swagger zxy
   termsOfService: 'http://swagger.io/terms/'
   contact:
     email: apiteam@swagger.io
@@ -22,6 +22,8 @@ tags:
       url: 'http://swagger.io'
   - name: teaching
     description: 教学
+  - name: parent
+    description: 家长反馈
   - name: parentFeedback
     description: 家长反馈
   - name: uploadFile
@@ -229,13 +231,13 @@ paths:
           description: Invalid status value
       security:
         - teacher_token: []
-  /parentFeedback/findByStatusAndParentId:
+  /parentFeedback/findByParentIdAndTeacherReaded:
     get:
       tags:
         - parentFeedback
-      summary: 查找家长反馈
+      summary: '查找家长反馈,如果传入是否家长已经读过状态，则以此过滤'
       description: ''
-      operationId: findParentFeedbacksByStatusAndParentId
+      operationId: findParentFeedbacksByParentIdAndTeacherReaded
       produces:
         - application/json
       parameters:
@@ -244,13 +246,11 @@ paths:
           required: true
           type: integer
           format: int64
-        - name: status
+        - name: teacherReaded
           in: query
-          description: Status values that need to be considered for filter
+          description: 老师是否已经读过
           required: false
-          type: string
-          enum:
-            - 参照ParentFeedbackStatus
+          type: boolean
       responses:
         '200':
           description: successful operation
@@ -262,6 +262,54 @@ paths:
           description: Invalid status value
       security:
         - teacher_token: []
+  /parent/status/findUnreadCount:
+    get:
+      tags:
+        - parent
+      summary: 查找家长未读的教学动态数量
+      description: ''
+      operationId: findParentUnreadStatusCount
+      produces:
+        - application/json
+      parameters:
+        - name: studentId
+          in: query
+          description: 查询的目标学生
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: integer
+        '400':
+          description: Invalid TeachingStatus
+      security:
+        - parent_token: []
+  '/parent/status/{statusId}/read':
+    post:
+      tags:
+        - parent
+      summary: 家长读教学动态
+      description: ''
+      operationId: parentReadStatus
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: statusId
+          description: ID of status that needs to be updated
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid TeachingStatus
+      security:
+        - parent_token: []
   /uploadFile:
     post:
       tags:
@@ -315,17 +363,11 @@ securityDefinitions:
     type: apiKey
     name: teacher_token
     in: header
+  parent_token:
+    type: apiKey
+    name: teacher_token
+    in: header
 definitions:
-  ParentFeedbackStatus:
-    type: string
-    enum: &ref_0
-      - normal
-      - readed
-      - deleteded
-    description: '家长反馈状态,普通，已读，已经删除'
-  Set:
-    type: string
-    enum: *ref_0
   ApiResponse:
     type: object
     properties:
@@ -440,10 +482,16 @@ definitions:
         description: 所属的教学阶段
         type: integer
         format: int64
+      studentId:
+        type: integer
+        format: int64
       creatorTeacherId:
         type: integer
         format: int64
         description: 创建的老师的ID
+      parentReaded:
+        type: boolean
+        description: 家长是否已经读过
       dimensions:
         type: array
         items:
@@ -494,6 +542,9 @@ definitions:
         format: int64
       content:
         type: string
+      teacherReaded:
+        type: boolean
+        description: 老师是否已经读过了
       feedbackResult:
         type: string
         description: 结果(positive很赞，negative待改进)
@@ -512,8 +563,6 @@ definitions:
       createDate:
         type: string
         format: date-time
-      status:
-        $ref: '#/definitions/ParentFeedbackStatus'
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
