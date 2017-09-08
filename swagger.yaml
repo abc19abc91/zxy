@@ -40,7 +40,8 @@ paths:
       operationId: ''
       produces:
         - application/json
-      parameters: []
+      parameters:
+        - $ref: '#/parameters/teacher_token'
       responses:
         '200':
           description: successful operation
@@ -50,8 +51,6 @@ paths:
               $ref: '#/definitions/Student'
         '400':
           description: Invalid token supplied
-      security:
-        - teacher_token: []
   /teaching/plan/findByStudentId:
     get:
       tags:
@@ -62,6 +61,7 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/teacher_token'
         - name: studentId
           in: query
           description: studentId that need to be considered for filter
@@ -75,8 +75,6 @@ paths:
             $ref: '#/definitions/TeachingPlan'
         '400':
           description: Invalid token supplied
-      security:
-        - teacher_token: []
   '/teaching/plan/{studentId}':
     post:
       tags:
@@ -87,6 +85,7 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/teacher_token'
         - name: studentId
           in: path
           description: 创建教学计划的学生ID
@@ -105,8 +104,6 @@ paths:
             $ref: '#/definitions/TeachingPlan'
         '400':
           description: Invalid TeachingPlan
-      security:
-        - teacher_token: []
   /teaching/plan/step/:
     post:
       tags:
@@ -117,6 +114,7 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/teacher_token'
         - name: teachingStep
           in: body
           description: 教学阶段数据
@@ -130,8 +128,6 @@ paths:
             $ref: '#/definitions/TeachingStep'
         '400':
           description: Invalid TeachingPlan
-      security:
-        - teacher_token: []
   '/teaching/plan/step/{stepId}':
     delete:
       tags:
@@ -142,6 +138,7 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/teacher_token'
         - name: stepId
           in: path
           description: The step that needs to be deleted
@@ -155,8 +152,6 @@ paths:
           description: Invalid stepId supplied
         '404':
           description: stepId not found
-      security:
-        - teacher_token: []
   /teaching/plan/step/status:
     post:
       tags:
@@ -167,6 +162,7 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/teacher_token'
         - name: teachingStatus
           in: body
           description: 教学动态数据
@@ -180,8 +176,6 @@ paths:
             $ref: '#/definitions/TeachingStatus'
         '400':
           description: Invalid TeachingStatus
-      security:
-        - teacher_token: []
   /parentFeedback:
     post:
       tags:
@@ -192,6 +186,7 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/teacher_token'
         - name: parentFeedback
           in: body
           description: 家长反馈数据
@@ -207,8 +202,6 @@ paths:
               $ref: '#/definitions/ParentFeedback'
         '400':
           description: Invalid status value
-      security:
-        - teacher_token: []
     put:
       tags:
         - parentFeedback
@@ -218,6 +211,7 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/teacher_token'
         - name: parentFeedback
           in: body
           description: 家长反馈数据
@@ -229,8 +223,6 @@ paths:
           description: successful operation
         '400':
           description: Invalid status value
-      security:
-        - teacher_token: []
   /parentFeedback/findByParentIdAndTeacherReaded:
     get:
       tags:
@@ -241,6 +233,7 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/teacher_token'
         - name: parentId
           in: query
           required: true
@@ -260,8 +253,6 @@ paths:
               $ref: '#/definitions/ParentFeedback'
         '400':
           description: Invalid status value
-      security:
-        - teacher_token: []
   /parent/status/findUnreadCount:
     get:
       tags:
@@ -272,6 +263,7 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/parent_token'
         - name: studentId
           in: query
           description: 查询的目标学生
@@ -285,8 +277,6 @@ paths:
             type: integer
         '400':
           description: Invalid TeachingStatus
-      security:
-        - parent_token: []
   '/parent/status/{statusId}/read':
     post:
       tags:
@@ -297,6 +287,7 @@ paths:
       produces:
         - application/json
       parameters:
+        - $ref: '#/parameters/parent_token'
         - in: path
           name: statusId
           description: ID of status that needs to be updated
@@ -308,8 +299,6 @@ paths:
           description: successful operation
         '400':
           description: Invalid TeachingStatus
-      security:
-        - parent_token: []
   /uploadFile:
     post:
       tags:
@@ -318,6 +307,7 @@ paths:
       consumes:
         - multipart/form-data
       parameters:
+        - $ref: '#/parameters/teacher_token'
         - in: formData
           name: file
           type: file
@@ -331,8 +321,6 @@ paths:
           description: Invalid stepId supplied
         '404':
           description: stepId not found
-      security:
-        - teacher_token: []
   /uploadFiles:
     post:
       tags:
@@ -341,6 +329,7 @@ paths:
       consumes:
         - multipart/form-data
       parameters:
+        - $ref: '#/parameters/teacher_token'
         - in: formData
           name: files
           type: file
@@ -356,8 +345,17 @@ paths:
           description: Invalid stepId supplied
         '404':
           description: stepId not found
-      security:
-        - teacher_token: []
+parameters:
+  teacher_token:
+    name: teacher_token
+    type: string
+    in: header
+    required: true
+  parent_token:
+    name: teacher_token
+    type: string
+    in: header
+    required: true
 securityDefinitions:
   teacher_token:
     type: apiKey
