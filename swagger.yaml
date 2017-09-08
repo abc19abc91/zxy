@@ -157,7 +157,7 @@ paths:
           description: stepId not found
       security:
         - teacher_token: []
-  /teaching/plan/step/Status:
+  /teaching/plan/step/status:
     post:
       tags:
         - teaching
@@ -488,6 +488,9 @@ definitions:
       creatorTeacherId:
         type: integer
         format: int64
+        description: 创建的老师的ID
+      creatorTeacherName:
+        type: string
         description: 创建的老师的ID
       parentReaded:
         type: boolean
