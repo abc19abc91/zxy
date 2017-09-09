@@ -37,11 +37,10 @@ paths:
         - teacher
       summary: 老师管理的学生列表和教学计划
       description: ''
-      operationId: ''
+      operationId: getTeacherStudents
       produces:
         - application/json
-      parameters:
-        - $ref: '#/parameters/teacher_token'
+      parameters: []
       responses:
         '200':
           description: successful operation
@@ -51,22 +50,23 @@ paths:
               $ref: '#/definitions/Student'
         '400':
           description: Invalid token supplied
+      security:
+        - teacher_token: []
   /teaching/plan/findByStudentId:
     get:
       tags:
         - teacher
       summary: 单个学生教学计划
       description: ''
-      operationId: ''
+      operationId: getTeachingPlanByStudentId
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/teacher_token'
         - name: studentId
           in: query
           description: studentId that need to be considered for filter
           required: true
-          type: integer
+          type: string
           collectionFormat: multi
       responses:
         '200':
@@ -75,7 +75,9 @@ paths:
             $ref: '#/definitions/TeachingPlan'
         '400':
           description: Invalid token supplied
-  '/teaching/plan/{studentId}':
+      security:
+        - teacher_token: []
+  /teaching/plan:
     post:
       tags:
         - teaching
@@ -85,14 +87,8 @@ paths:
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/teacher_token'
-        - name: studentId
-          in: path
-          description: 创建教学计划的学生ID
-          required: true
-          type: integer
         - in: body
-          name: body
+          name: teachingStep
           description: 第一个教学阶段
           required: true
           schema:
@@ -104,6 +100,8 @@ paths:
             $ref: '#/definitions/TeachingPlan'
         '400':
           description: Invalid TeachingPlan
+      security:
+        - teacher_token: []
   /teaching/plan/step/:
     post:
       tags:
@@ -114,7 +112,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/teacher_token'
         - name: teachingStep
           in: body
           description: 教学阶段数据
@@ -128,6 +125,8 @@ paths:
             $ref: '#/definitions/TeachingStep'
         '400':
           description: Invalid TeachingPlan
+      security:
+        - teacher_token: []
   '/teaching/plan/step/{stepId}':
     delete:
       tags:
@@ -138,7 +137,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/teacher_token'
         - name: stepId
           in: path
           description: The step that needs to be deleted
@@ -152,6 +150,8 @@ paths:
           description: Invalid stepId supplied
         '404':
           description: stepId not found
+      security:
+        - teacher_token: []
   /teaching/plan/step/status:
     post:
       tags:
@@ -162,7 +162,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/teacher_token'
         - name: teachingStatus
           in: body
           description: 教学动态数据
@@ -176,6 +175,8 @@ paths:
             $ref: '#/definitions/TeachingStatus'
         '400':
           description: Invalid TeachingStatus
+      security:
+        - teacher_token: []
   /parentFeedback:
     post:
       tags:
@@ -186,7 +187,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/teacher_token'
         - name: parentFeedback
           in: body
           description: 家长反馈数据
@@ -202,6 +202,8 @@ paths:
               $ref: '#/definitions/ParentFeedback'
         '400':
           description: Invalid status value
+      security:
+        - teacher_token: []
     put:
       tags:
         - parentFeedback
@@ -211,7 +213,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/teacher_token'
         - name: parentFeedback
           in: body
           description: 家长反馈数据
@@ -223,6 +224,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid status value
+      security:
+        - teacher_token: []
   /parentFeedback/findByParentIdAndTeacherReaded:
     get:
       tags:
@@ -233,7 +236,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/teacher_token'
         - name: parentId
           in: query
           required: true
@@ -253,6 +255,8 @@ paths:
               $ref: '#/definitions/ParentFeedback'
         '400':
           description: Invalid status value
+      security:
+        - teacher_token: []
   /parent/status/findUnreadCount:
     get:
       tags:
@@ -263,13 +267,11 @@ paths:
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/parent_token'
         - name: studentId
           in: query
           description: 查询的目标学生
           required: true
-          type: integer
-          format: int64
+          type: string
       responses:
         '200':
           description: successful operation
@@ -277,6 +279,8 @@ paths:
             type: integer
         '400':
           description: Invalid TeachingStatus
+      security:
+        - parent_token: []
   '/parent/status/{statusId}/read':
     post:
       tags:
@@ -287,7 +291,6 @@ paths:
       produces:
         - application/json
       parameters:
-        - $ref: '#/parameters/parent_token'
         - in: path
           name: statusId
           description: ID of status that needs to be updated
@@ -299,6 +302,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid TeachingStatus
+      security:
+        - parent_token: []
   /uploadFile:
     post:
       tags:
@@ -307,7 +312,6 @@ paths:
       consumes:
         - multipart/form-data
       parameters:
-        - $ref: '#/parameters/teacher_token'
         - in: formData
           name: file
           type: file
@@ -321,6 +325,8 @@ paths:
           description: Invalid stepId supplied
         '404':
           description: stepId not found
+      security:
+        - teacher_token: []
   /uploadFiles:
     post:
       tags:
@@ -329,7 +335,6 @@ paths:
       consumes:
         - multipart/form-data
       parameters:
-        - $ref: '#/parameters/teacher_token'
         - in: formData
           name: files
           type: file
@@ -345,17 +350,8 @@ paths:
           description: Invalid stepId supplied
         '404':
           description: stepId not found
-parameters:
-  teacher_token:
-    name: teacher_token
-    type: string
-    in: header
-    required: true
-  parent_token:
-    name: teacher_token
-    type: string
-    in: header
-    required: true
+      security:
+        - teacher_token: []
 securityDefinitions:
   teacher_token:
     type: apiKey
@@ -380,25 +376,14 @@ definitions:
     type: object
     description: 学生
     properties:
-      id:
-        type: integer
-        format: int64
+      studentId:
+        type: string
       name:
         type: string
-      firstName:
+      gradeName:
         type: string
-      lastName:
+      classId:
         type: string
-      email:
-        type: string
-      password:
-        type: string
-      phone:
-        type: string
-      userStatus:
-        type: integer
-        format: int32
-        description: Student Status
       teachingPlan:
         $ref: '#/definitions/TeachingStep'
     xml:
@@ -413,11 +398,9 @@ definitions:
       name:
         type: string
       studentId:
-        type: integer
-        format: int64
+        type: string
       creatorTeacherId:
-        type: integer
-        format: int64
+        type: string
         description: 创建的老师的ID
       content:
         type: string
@@ -444,13 +427,11 @@ definitions:
         type: integer
         format: int64
       studentId:
-        type: integer
-        format: int64
+        type: string
       name:
         type: string
       creatorTeacherId:
-        type: integer
-        format: int64
+        type: string
         description: 创建的老师的ID
       content:
         type: string
@@ -481,11 +462,9 @@ definitions:
         type: integer
         format: int64
       studentId:
-        type: integer
-        format: int64
+        type: string
       creatorTeacherId:
-        type: integer
-        format: int64
+        type: string
         description: 创建的老师的ID
       creatorTeacherName:
         type: string
