@@ -321,6 +321,109 @@ paths:
           description: successful operation
         '400':
           description: Invalid TeachingStatus
+  /Parent/GetTeachingSteps:
+    post:
+      tags:
+        - parent
+      summary: 家长端查找教学计划列表
+      description: ''
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/teacher_token'
+        - name: studentId
+          in: query
+          description: 查询的目标学生
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 教学计划集合
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TeachingStep'
+            xml:
+              name: teachingSteps
+              wrapped: true
+        '400':
+          description: Invalid studentId
+  /Parent/GetTeachingStatuses:
+    post:
+      tags:
+        - parent
+      summary: 家长端查找教学动态
+      description: ''
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/teacher_token'
+        - name: teachingStepId
+          in: query
+          description: 教学阶段id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 教学动态集合
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TeachingStatus'
+            xml:
+              name: teachingStatuses
+              wrapped: true
+        '400':
+          description: Invalid teachingStepId
+  /Parent/GetTeachingStatusDetail:
+    post:
+      tags:
+        - parent
+      summary: 家长端查找教学动态详情
+      description: ''
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/teacher_token'
+        - name: teachingStatusId
+          in: query
+          description: 教学动态id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 教学动态详情
+          schema:
+            $ref: '#/definitions/TeachingStatus'
+        '400':
+          description: Invalid teachingStatusId
+  /Parent/GetParentFeedback:
+    post:
+      tags:
+        - parent
+      summary: 获取家长的评价
+      description: ''
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/teacher_token'
+        - name: feedbackTarget
+          in: query
+          description: '评价类型("plan","step","status")'
+          required: true
+          type: string
+        - name: feedbackTargetId
+          in: query
+          description: 类型对应id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 评价的内容
+          schema:
+            $ref: '#/definitions/ParentFeedback'
+        '400':
+          description: 'Invalid feedbackTarget, feedbackTargetId'
   /uploadFile:
     post:
       tags:
