@@ -321,12 +321,12 @@ paths:
           description: successful operation
         '400':
           description: Invalid TeachingStatus
-  /Parent/GetTeachingSteps:
+  /parent/getTeachingSteps:
     post:
       tags:
         - parent
       summary: 家长端查找教学计划列表
-      description: ''
+      description: 暂时不实现
       produces:
         - application/json
       parameters:
@@ -348,12 +348,12 @@ paths:
               wrapped: true
         '400':
           description: Invalid studentId
-  /Parent/GetTeachingStatuses:
+  /parent/getTeachingStatuses:
     post:
       tags:
         - parent
       summary: 家长端查找教学动态
-      description: ''
+      description: 暂时不实现
       produces:
         - application/json
       parameters:
@@ -375,12 +375,12 @@ paths:
               wrapped: true
         '400':
           description: Invalid teachingStepId
-  /Parent/GetTeachingStatusDetail:
+  /parent/getTeachingStatusDetail:
     post:
       tags:
         - parent
       summary: 家长端查找教学动态详情
-      description: ''
+      description: 暂时不实现
       produces:
         - application/json
       parameters:
@@ -397,12 +397,12 @@ paths:
             $ref: '#/definitions/TeachingStatus'
         '400':
           description: Invalid teachingStatusId
-  /Parent/GetParentFeedback:
+  /parent/getParentFeedback:
     post:
       tags:
         - parent
       summary: 获取家长的评价
-      description: ''
+      description: 暂时不实现
       produces:
         - application/json
       parameters:
@@ -580,6 +580,9 @@ definitions:
       createDate:
         type: string
         format: date-time
+      isStatic:
+        type: boolean
+        description: 创建或者更新后，没有评论和点赞
       teachingStepId:
         description: 所属的教学阶段
         type: integer
