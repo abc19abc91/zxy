@@ -59,13 +59,15 @@ paths:
       tags:
         - teacher
       summary: 单个学生教学计划
-      description: ''
+      description: token根据自己是哪一端来传，不需要全部传入
       operationId: getTeachingPlanByStudentId
       produces:
         - application/json
       parameters:
         - $ref: '#/parameters/teacher_token'
         - $ref: '#/parameters/teacher_id'
+        - $ref: '#/parameters/parent_token'
+        - $ref: '#/parameters/parent_id'
         - name: studentId
           in: query
           description: studentId that need to be considered for filter
@@ -103,7 +105,7 @@ paths:
             $ref: '#/definitions/TeachingPlan'
         '400':
           description: Invalid TeachingPlan
-  /teaching/plan/step/:
+  /teaching/plan/step:
     post:
       tags:
         - teaching
@@ -132,6 +134,32 @@ paths:
           description: 找不到教学计划
         '405':
           description: 输入错误
+    put:
+      tags:
+        - teaching
+      summary: 更新已有的教学阶段
+      description: ''
+      operationId: updateTeachingStep
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/teacher_token'
+        - $ref: '#/parameters/teacher_id'
+        - in: body
+          name: body
+          description: TeahchingStep object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/TeachingStep'
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: TeachingStep not found
+        '405':
+          description: Validation exception
   '/teaching/plan/step/{stepId}':
     delete:
       tags:
@@ -838,7 +866,11 @@ definitions:
         type: string
       gradeName:
         type: string
+      gradeNo:
+        type: integer
       classId:
+        type: string
+      className:
         type: string
       teachingPlan:
         $ref: '#/definitions/TeachingStep'
@@ -873,7 +905,13 @@ definitions:
         format: date-time
       isStatic:
         type: boolean
-        description: 创建或者更新后，没有评论和点赞
+        description: 创建或者更新后，没有评论和点赞，已经弃用，用feedbackResult代替
+      feedbackResult:
+        description: '评论状态，用来代替isStatic,结果(positive很赞，negative待改进, null没有评论)'
+        type: string
+        enum:
+          - positive
+          - negative
       teachingSteps:
         type: array
         items:
