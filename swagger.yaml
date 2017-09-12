@@ -903,9 +903,6 @@ definitions:
       createDate:
         type: string
         format: date-time
-      isStatic:
-        type: boolean
-        description: 创建或者更新后，没有评论和点赞，已经弃用，用feedbackResult代替
       feedbackResult:
         description: '评论状态，用来代替isStatic,结果(positive很赞，negative待改进, null没有评论)'
         type: string
@@ -958,9 +955,6 @@ definitions:
       createDate:
         type: string
         format: date-time
-      isStatic:
-        type: boolean
-        description: '创建或者更新后，没有评论和点赞,已经弃用，用feedbackResult代替'
       feedbackResult:
         description: '评论状态，用来代替isStatic,结果(positive很赞，negative待改进, null没有评论)'
       teachingStepId:
