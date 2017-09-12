@@ -634,6 +634,11 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: get communicationTimelinessOverview successfully
@@ -641,7 +646,7 @@ paths:
             $ref: '#/definitions/CommunicationTimelinessOverview'
         '400':
           description: Invalid token supplied
-  /teacher/parent/communicationEffectOverview:
+  /principal/parent/communicationEffectOverview:
     get:
       tags:
         - principal
@@ -653,12 +658,16 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: get ParentCommunicationEffectOverview successfully
           schema:
-            items:
-              $ref: '#/definitions/CommunicationEffectOverview'
+            $ref: '#/definitions/CommunicationEffectOverview'
         '400':
           description: Invalid token supplied
   /principal/parent/findByThreeDaysNoReceivedStatusFeedbacks:
@@ -673,13 +682,18 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: successful
           schema:
             type: array
             items:
-              $ref: '#/definitions/Parent'
+              $ref: '#/definitions/Student'
         '400':
           description: Invalid token supplied
   /principal/status/findBySevenDaysNew:
@@ -874,16 +888,6 @@ definitions:
         type: string
       teachingPlan:
         $ref: '#/definitions/TeachingStep'
-  Parent:
-    type: object
-    description: 学生
-    properties:
-      parentId:
-        type: string
-      studentId:
-        type: string
-      name:
-        type: string
   TeachingPlan:
     type: object
     description: 教学计划
@@ -1135,11 +1139,6 @@ definitions:
         format: float
       sevenDaysPositiveTeachingStatusPercentTopRanking:
         description: 7天内教学动态点赞率（最高   按百分比降序排列）
-        type: array
-        items:
-          $ref: '#/definitions/NameAndFloat'
-      sevenDaysPositiveTeachingStatusPercentBottomRanking:
-        description: 7天内教学动态点赞率（最低   按百分比升序排列）
         type: array
         items:
           $ref: '#/definitions/NameAndFloat'
