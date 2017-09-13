@@ -4,6 +4,8 @@ info:
     zxy api      Swagger at [http://swagger.io](http://swagger.io) or on
     [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample,
     you can use the api key `special-key` to test the authorization     filters.
+
+    模型中的时间字段，没有特殊说明的都不要上传，例如createDate,服务器会自动生成，不需要客户端上传
   version: 1.0.0
   title: Swagger zxy
   termsOfService: 'http://swagger.io/terms/'
@@ -213,7 +215,7 @@ paths:
   /teaching/plan/step/status/findStatic:
     get:
       tags:
-        - teacher
+        - teaching
       summary: 获取没有点赞和评论的教学动态
       description: ''
       operationId: getStaticTeachingStatusByStudentId
@@ -236,12 +238,41 @@ paths:
               $ref: '#/definitions/TeachingStatus'
         '400':
           description: Invalid token supplied
+  /teaching/plan/step/status/detail:
+    get:
+      tags:
+        - teaching
+      summary: 教学动态详情
+      description: 根据实际客户传对应的TOKEN和ID
+      operationId: getTeachingStatusDetailByStatusId
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/principal_token'
+        - $ref: '#/parameters/principal_id'
+        - $ref: '#/parameters/teacher_token'
+        - $ref: '#/parameters/teacher_id'
+        - name: statusId
+          in: query
+          description: The status that needs to be deleted
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful
+          schema:
+            $ref: '#/definitions/TeachingStatusDetail'
+        '400':
+          description: Invalid token supplied
+        '404':
+          description: Invalid statusId
   /parentFeedback:
     post:
       tags:
         - parentFeedback
       summary: 添加家长反馈
-      description: ''
+      description: 家长ID，学生ID必填
       operationId: createParentFeedbacks
       produces:
         - application/json
@@ -991,6 +1022,20 @@ definitions:
       complete:
         type: boolean
         default: false
+  TeachingStatusDetail:
+    type: object
+    title: 教学动态-详情：附加学生数据和评论
+    allOf:
+      - $ref: '#/definitions/TeachingStatus'
+      - type: object
+        properties:
+          student:
+            $ref: '#/definitions/Student'
+          feedbacks:
+            type: array
+            description: 家长反馈
+            items:
+              $ref: '#/definitions/ParentFeedback'
   Dimension:
     type: object
     description: 教学动态-评价维度：teaching status dimension
@@ -1012,6 +1057,10 @@ definitions:
         description: IMAGE或者VOICE
       url:
         type: string
+      duration:
+        type: integer
+        format: int
+        description: VOICE文件的时长，不是语音写0
   ParentFeedback:
     type: object
     description: 家长反馈
@@ -1043,6 +1092,7 @@ definitions:
       feedbackTargetId:
         type: integer
         format: int64
+        description: 反馈对像的id(教学计划或者教学动态的ID)
       createDate:
         type: string
         format: date-time
