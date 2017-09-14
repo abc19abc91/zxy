@@ -558,6 +558,11 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: get new plans  successfully
@@ -579,6 +584,11 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: get update  plans  successfully
@@ -600,6 +610,11 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: get positive  plans  successfully
@@ -621,6 +636,11 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: get  negative plans  successfully
@@ -642,6 +662,11 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: get plans  successfully
@@ -948,6 +973,9 @@ definitions:
         type: string
       studentId:
         type: string
+      studentName:
+        type: string
+        description: 学生名字，不一定有值，在需要的接口中才赋值
       creatorTeacherId:
         type: string
         description: 创建的老师的ID
