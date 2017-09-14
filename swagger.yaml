@@ -250,8 +250,6 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
-        - $ref: '#/parameters/teacher_token'
-        - $ref: '#/parameters/teacher_id'
         - name: statusId
           in: query
           description: The status that needs to be deleted
@@ -739,6 +737,11 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: successful
@@ -760,6 +763,11 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: successful
@@ -781,6 +789,11 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: successful
@@ -802,6 +815,11 @@ paths:
       parameters:
         - $ref: '#/parameters/principal_token'
         - $ref: '#/parameters/principal_id'
+        - name: schoolId
+          in: query
+          description: 学校ID
+          required: true
+          type: string
       responses:
         '200':
           description: successful
@@ -1124,6 +1142,11 @@ definitions:
         description: 未被家长评论或点赞的教学计划百分比
         type: number
         format: float
+      positiveRankingList:
+        description: 教学计划点赞率排行榜
+        type: array
+        items:
+          $ref: '#/definitions/NameAndFloat'
   CommunicationTimelinessOverview:
     type: object
     description: 老师与家长沟通馈的 速度报告 统计的是老师的数据
